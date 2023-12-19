@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Record Page</title>
+        <link rel="stylesheet" type="text/css" href="css/record.css">
+
+    </head>
+
+    <body>
+        <div class="app">
+            <audio controls class="audio-player"></audio>
+            <input onclick="startRecording()" type="button" value="录音" />
+            <input onclick="stopRecording()" type="button" value="停止" />
+            <input onclick="playRecording()" type="button" value="播放" />
+            <input onclick="downloadPCM()" type="button" value="下载PCM" />
+            <a id="download" download="record.pcm"></a>
+        </div>
+    </body>
+    <script type="text/javascript" src="js/recorder-0.3.1.js"></script>
+    <script>
+        const player = document.querySelector(".audio-player")
+        var recorder = new Recorder({
+            sampleBits: 16,         // 采样位数，支持 8 或 16，默认是 16
+            sampleRate: 16000,      // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，Chrome 是 48000
+            numChannels: 1,         // 声道，支持 1 或 2， 默认是 1
+            success: function () { //成功回调函数
+                // start.disabled = false;
+            },
+            error: function (msg) { //失败回调函数
+                alert(msg);
+            },
+            fix: function (msg) { //不支持H5录音回调函数
+                alert(msg);
+            }
+        });
+
+        // 开始录音
+        function startRecording() {
+            recorder.start().then(function () {
+                // 开始录音
+            });
+        }
+
+        // 停止录音
+        function stopRecording() {
+            // 结束录音
+            recorder.stop();
+
+            const audioBlob = recorder.getWAVBlob();
+            const audioURL = window.URL.createObjectURL(audioBlob);
+            // 赋值给一个 <audio> 元素的 src 属性进行播放
+            player.src = audioURL;
+        }
+
+        //播放录音
+        function playRecording() {
+            recorder.play();
+        }
+
+        // 下载 PCM 文件
+        function downloadPCM() {
+            // 参数是文件名，不需要带.pcm
+            recorder.downloadPCM("record");
+        }
+    </script>
+
+</html>
